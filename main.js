@@ -129,7 +129,8 @@ function init() {
             Enitity.addEffect(user, MobEffect.movementSpeed, 600, 1, false, true);
         }));
     items.push(new ItemCompat(607, "Barbarian II")
-        .setDamage(200)
+        .setCooldown(200)
+        .setDamage(6)
         .setFunc((x, y, z, victim, user) => {
             Enitity.addEffect(user, MobEffect.damageBoost, 200, 1, false, true);
             Enitity.addEffect(user, MobEffect.damageResistance, 200, 1, false, true);
@@ -165,7 +166,17 @@ function init() {
     items.push(new ItemCompat(614, "Fire Magicians I").setDamage(2)
         .setCooldown(30)
         .setFunc((x, y, z, victim, user) => {
+            let radian = 0.017,
+                yaw = Entity.getYaw(user),
+                pitch = Entity.getPitch(user),
+                sin = -Math.sin(yaw * radian),
+                cos = Math.cos(yaw * radian),
+                tan = -Math.sin(pitch * radian),
+                pcos = Math.cos(pitch * radian);
 
+            for (let i = 5; i < 15; i++) {
+                Level.setTile(x + i * sin * pcos, y, z + i * cos * pcos);
+            }
         }));
     items.push(new ItemCompat(615, "Fire Magicians II").setDamage(4)
         .setCooldown(50)
@@ -178,7 +189,7 @@ function init() {
             Enitity.addEffect(user, MobEffect.movementSlowdown, 200, 0, false, true);
         }));
     items.push(new ItemCompat(617, "Ice Magicians II").setDamage(4)
-        .setCooldown(50)
+        .setCooldown(25)
         .setFunc((x, y, z, victim, user) => {
             new java.lang.Thread({
                 run() {
@@ -241,12 +252,12 @@ function init() {
             }).start();
         }));
 
-    items.push(new ItemCompat(618, "Riot Drinker I").setDamage(4));
+    items.push(new ItemCompat(618, "Riot Drinker I").setDamage(2));
     items.push(new ItemCompat(619, "Riot Drinker II")
-        .setCooldown(30
-            .setFunc((x, y, z, victim, user) => {
-                Level.explode(x, y, z, 4);
-            }));
-    }
+        .setCooldown(30)
+        .setFunc((x, y, z, victim, user) => {
+            Level.explode(x, y, z, 4);
+        }));
+}
 
-    init();
+init();
