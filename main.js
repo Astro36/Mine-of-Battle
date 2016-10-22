@@ -1,6 +1,6 @@
 "use strict";
 
-const ITEM_NAMES = ["Ares", "Assassin", "Apollon", "Barbarian", "Stance", "Fighter", "Phoenix", "Fire Magicians", "Ice Magicians", "Riot Drinker"];
+const ITEM_NAMES = ["Ares", "Assassin", "Apollon", "Barbarian", "Stance", "Fighter", "Phoenix", "Fire Magician", "Ice Magician", "Riot Drinker"];
 
 let items = [];
 
@@ -55,14 +55,14 @@ ItemCompat.prototype.use = function(x, y, z, victim, user) {
     }
 
     if (this._available) {
-        this._available = false;
-
         if (typeof this._func === "function") {
             this._func(x, y, z, victim, user);
         }
 
         let thiz = this;
         if (thiz._cooldown > 0) {
+            this._available = false;
+
             new java.lang.Thread({
                 run() {
                     java.lang.Thread.sleep(thiz._cooldown * 1000);
@@ -70,6 +70,8 @@ ItemCompat.prototype.use = function(x, y, z, victim, user) {
                 }
             }).start();
         }
+    } else {
+        ModPE.showTipMessage(this._name + "§f§r is not available");
     }
 };
 
@@ -98,72 +100,75 @@ function useItem(x, y, z, itemid) {
 }
 
 function init() {
+try{
     for (let i = 0; i < ITEM_NAMES.length; i++) {
-        ModPE.setItem(i * 2 + 600, "map_empty", 0, ITEM_NAMES[i] + " I", 0);
-        ModPE.setItem(i * 2 + 601, "map_empty", 0, ITEM_NAMES[i] + " II", 0);
+        ModPE.setItem(i * 2 + 256, "map_empty", 0, "§c§o" + ITEM_NAMES[i] + " I", 0);
+        ModPE.setItem(i * 2 + 257, "map_empty", 0, "§b§o" + ITEM_NAMES[i] + " II", 0);
+        Player.addItemCreativeInv(i * 2 + 256, 1, 0);
+        Player.addItemCreativeInv(i * 2 + 257, 1, 0);
     }
 
     // ["Ares", "Assassin", "Apollon", "Barbarian", "Stance", "Fighter", "Phoenix", "Fire Magicians", "Ice Magicians", "Riot Drinker"];
 
-    items.push(new ItemCompat(600, "Ares I").setDamage(6));
-    items.push(new ItemCompat(601, "Ares II").setDamage(8));
+    items.push(new ItemCompat(256, "Ares I").setDamage(6));
+    items.push(new ItemCompat(257, "Ares II").setDamage(8));
 
-    items.push(new ItemCompat(602, "Assassin I")
+    items.push(new ItemCompat(258, "Assassin I")
         .setCooldown(25)
         .setDamage(3)
         .setFunc((x, y, z, victim, user) => {
-            Enitity.addEffect(user, MobEffect.invisibility, 160, 0, false, true);
+            Entity.addEffect(user, MobEffect.invisibility, 160, 0, false, true);
         }));
-    items.push(new ItemCompat(603, "Assassin II")
+    items.push(new ItemCompat(259, "Assassin II")
         .setCooldown(20)
         .setDamage(6)
         .setFunc((x, y, z, victim, user) => {
-            Enitity.addEffect(user, MobEffect.invisibility, 200, 0, false, true);
+            Entity.addEffect(user, MobEffect.invisibility, 200, 0, false, true);
         }));
 
-    items.push(new ItemCompat(604, "Apollon I"));
-    items.push(new ItemCompat(605, "Apollon II"));
+    items.push(new ItemCompat(260, "Apollon I"));
+    items.push(new ItemCompat(261, "Apollon II"));
 
-    items.push(new ItemCompat(606, "Barbarian I").setDamage(4)
+    items.push(new ItemCompat(262, "Barbarian I").setDamage(4)
         .setFunc((x, y, z, victim, user) => {
-            Enitity.addEffect(user, MobEffect.movementSpeed, 600, 1, false, true);
+            Entity.addEffect(user, MobEffect.movementSpeed, 600, 1, false, true);
         }));
-    items.push(new ItemCompat(607, "Barbarian II")
+    items.push(new ItemCompat(263, "Barbarian II")
         .setCooldown(200)
         .setDamage(6)
         .setFunc((x, y, z, victim, user) => {
-            Enitity.addEffect(user, MobEffect.damageBoost, 200, 1, false, true);
-            Enitity.addEffect(user, MobEffect.damageResistance, 200, 1, false, true);
-            Enitity.addEffect(user, MobEffect.regeneration, 200, 1, false, true);
-            Enitity.addEffect(user, MobEffect.absorption, 200, 1, false, true);
+            Entity.addEffect(user, MobEffect.damageBoost, 200, 1, false, true);
+            Entity.addEffect(user, MobEffect.damageResistance, 200, 1, false, true);
+            Entity.addEffect(user, MobEffect.regeneration, 200, 1, false, true);
+            Entity.addEffect(user, MobEffect.absorption, 200, 1, false, true);
         }));
 
-    items.push(new ItemCompat(608, "Stance I"));
-    items.push(new ItemCompat(609, "Stance II")
+    items.push(new ItemCompat(264, "Stance I"));
+    items.push(new ItemCompat(265, "Stance II")
         .setFunc((x, y, z, victim, user) => {
-            Enitity.addEffect(victim, MobEffect.poison, 200, 0, false, true);
+            Entity.addEffect(victim, MobEffect.poison, 200, 0, false, true);
         }));
 
-    items.push(new ItemCompat(610, "Fighter I").setDamage(4));
-    items.push(new ItemCompat(611, "Fighter II")
+    items.push(new ItemCompat(266, "Fighter I").setDamage(4));
+    items.push(new ItemCompat(267, "Fighter II")
         .setCooldown(45)
         .setDamage(4)
         .setFunc((x, y, z, victim, user) => {
             Entity.setVelY(victim, 10);
         }));
 
-    items.push(new ItemCompat(612, "Phoenix I").setDamage(2)
+    items.push(new ItemCompat(268, "Phoenix I").setDamage(2)
         .setFunc((x, y, z, victim, user) => {
-            Enitity.addEffect(user, MobEffect.damageResistance, 600, 1, false, true);
-            Enitity.addEffect(user, MobEffect.regeneration, 600, 0, false, true);
+            Entity.addEffect(user, MobEffect.damageResistance, 600, 1, false, true);
+            Entity.addEffect(user, MobEffect.regeneration, 600, 0, false, true);
         }));
-    items.push(new ItemCompat(613, "Phoenix II").setDamage(3)
+    items.push(new ItemCompat(269, "Phoenix II").setDamage(3)
         .setFunc((x, y, z, victim, user) => {
             Entity.setFireTicks(victim, 1);
             Entity.setHealth(user, Entity.getHealth(user) + 1);
         }));
 
-    items.push(new ItemCompat(614, "Fire Magicians I").setDamage(2)
+    items.push(new ItemCompat(270, "Fire Magician I").setDamage(2)
         .setCooldown(30)
         .setFunc((x, y, z, victim, user) => {
             let radian = 0.017,
@@ -174,21 +179,21 @@ function init() {
                 tan = -Math.sin(pitch * radian),
                 pcos = Math.cos(pitch * radian);
 
-            for (let i = 5; i < 15; i++) {
-                Level.setTile(x + i * sin * pcos, y, z + i * cos * pcos);
+            for (let i = 3; i < 14; i++) {
+                Level.setTile(x + i * sin * pcos, y, z + i * cos * pcos, 51);
             }
         }));
-    items.push(new ItemCompat(615, "Fire Magicians II").setDamage(4)
+    items.push(new ItemCompat(271, "Fire Magician II").setDamage(4)
         .setCooldown(50)
         .setFunc((x, y, z, victim, user) => {
             Level.explode(x, y, z, 3, true);
         }));
 
-    items.push(new ItemCompat(616, "Ice Magicians I").setDamage(2)
+    items.push(new ItemCompat(272, "Ice Magician I").setDamage(2)
         .setFunc((x, y, z, victim, user) => {
-            Enitity.addEffect(user, MobEffect.movementSlowdown, 200, 0, false, true);
+            Entity.addEffect(user, MobEffect.movementSlowdown, 200, 0, false, true);
         }));
-    items.push(new ItemCompat(617, "Ice Magicians II").setDamage(4)
+    items.push(new ItemCompat(273, "Ice Magician II").setDamage(4)
         .setCooldown(25)
         .setFunc((x, y, z, victim, user) => {
             new java.lang.Thread({
@@ -252,12 +257,13 @@ function init() {
             }).start();
         }));
 
-    items.push(new ItemCompat(618, "Riot Drinker I").setDamage(2));
-    items.push(new ItemCompat(619, "Riot Drinker II")
+    items.push(new ItemCompat(274, "Riot Drinker I").setDamage(2));
+    items.push(new ItemCompat(275, "Riot Drinker II")
         .setCooldown(30)
         .setFunc((x, y, z, victim, user) => {
             Level.explode(x, y, z, 4);
         }));
+        }catch(e){print(e)}
 }
 
 init();
