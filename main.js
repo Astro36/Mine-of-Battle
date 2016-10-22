@@ -77,7 +77,10 @@ ItemCompat.prototype.use = function(x, y, z, victim, user) {
 
 function onUsedItemListener(x, y, z, victim, user, id) {
     for (let i = items.length; i--;) {
-        i.
+        let item = items[i];
+        if (id === item.getId()) {
+            item.use(x, y, z, victim, user);
+        }
     }
 }
 
@@ -113,7 +116,7 @@ function init() {
         }));
     items.push(new ItemCompat(603, "Assassin II")
         .setCooldown(20)
-        .setDamage(3)
+        .setDamage(6)
         .setFunc((x, y, z, victim, user) => {
             Enitity.addEffect(user, MobEffect.invisibility, 200, 0, false, true);
         }));
@@ -155,45 +158,95 @@ function init() {
         }));
     items.push(new ItemCompat(613, "Phoenix II").setDamage(3)
         .setFunc((x, y, z, victim, user) => {
-            if (Player.isPlayer(victim)) {
-                Entity.setFireTicks(victim, 1)
-                Entity.setHealth(user, Entity.getHealth(user) + 1);
-            }
-
+            Entity.setFireTicks(victim, 1);
+            Entity.setHealth(user, Entity.getHealth(user) + 1);
         }));
 
-    items.push(new ItemCompat(614, "Fire Magicians I")
+    items.push(new ItemCompat(614, "Fire Magicians I").setDamage(2)
         .setCooldown(30)
         .setFunc((x, y, z, victim, user) => {
 
         }));
-    items.push(new ItemCompat(615, "Fire Magicians II")
+    items.push(new ItemCompat(615, "Fire Magicians II").setDamage(4)
         .setCooldown(50)
         .setFunc((x, y, z, victim, user) => {
-
+            Level.explode(x, y, z, 3, true);
         }));
 
-    items.push(new ItemCompat(616, "Ice Magicians I")
-        .setCooldown(30)
+    items.push(new ItemCompat(616, "Ice Magicians I").setDamage(2)
         .setFunc((x, y, z, victim, user) => {
-
+            Enitity.addEffect(user, MobEffect.movementSlowdown, 200, 0, false, true);
         }));
-    items.push(new ItemCompat(617, "Ice Magicians II")
-        .setCooldown(25)
+    items.push(new ItemCompat(617, "Ice Magicians II").setDamage(4)
+        .setCooldown(50)
         .setFunc((x, y, z, victim, user) => {
-
+            new java.lang.Thread({
+                run() {
+                    Level.setTile(x - 1, y, z + 1, 79, 0);
+                    Level.setTile(x - 1, y, z, 79, 0);
+                    Level.setTile(x - 1, y, z - 1, 79, 0);
+                    Level.setTile(x, y, z + 1, 79, 0);
+                    Level.setTile(x, y, z, 79, 0);
+                    Level.setTile(x, y, z - 1, 79, 0);
+                    Level.setTile(x + 1, y, z + 1, 79, 0);
+                    Level.setTile(x + 1, y, z, 79, 0);
+                    Level.setTile(x + 1, y, z - 1, 79, 0);
+                    Level.setTile(x - 1, y + 1, z + 1, 79, 0);
+                    Level.setTile(x - 1, y + 1, z, 79, 0);
+                    Level.setTile(x - 1, y + 1, z - 1, 79, 0);
+                    Level.setTile(x, y + 1, z + 1, 79, 0);
+                    Level.setTile(x, y + 1, z, 79, 0);
+                    Level.setTile(x, y + 1, z - 1, 79, 0);
+                    Level.setTile(x + 1, y + 1, z + 1, 79, 0);
+                    Level.setTile(x + 1, y + 1, z, 79, 0);
+                    Level.setTile(x + 1, y + 1, z - 1, 79, 0);
+                    Level.setTile(x - 1, y + 2, z + 1, 79, 0);
+                    Level.setTile(x - 1, y + 2, z, 79, 0);
+                    Level.setTile(x - 1, y + 2, z - 1, 79, 0);
+                    Level.setTile(x, y + 2, z + 1, 79, 0);
+                    Level.setTile(x, y + 2, z, 79, 0);
+                    Level.setTile(x, y + 2, z - 1, 79, 0);
+                    Level.setTile(x + 1, y + 2, z + 1, 79, 0);
+                    Level.setTile(x + 1, y + 2, z, 79, 0);
+                    Level.setTile(x + 1, y + 2, z - 1, 79, 0);
+                    java.lang.Thread.sleep(5000);
+                    Level.setTile(x - 1, y, z + 1, 0, 0);
+                    Level.setTile(x - 1, y, z, 0, 0);
+                    Level.setTile(x - 1, y, z - 1, 0, 0);
+                    Level.setTile(x, y, z + 1, 0, 0);
+                    Level.setTile(x, y, z, 0, 0);
+                    Level.setTile(x, y, z - 1, 0, 0);
+                    Level.setTile(x + 1, y, z + 1, 0, 0);
+                    Level.setTile(x + 1, y, z, 0, 0);
+                    Level.setTile(x + 1, y, z - 1, 0, 0);
+                    Level.setTile(x - 1, y + 1, z + 1, 0, 0);
+                    Level.setTile(x - 1, y + 1, z, 0, 0);
+                    Level.setTile(x - 1, y + 1, z - 1, 0, 0);
+                    Level.setTile(x, y + 1, z + 1, 0, 0);
+                    Level.setTile(x, y + 1, z, 0, 0);
+                    Level.setTile(x, y + 1, z - 1, 0, 0);
+                    Level.setTile(x + 1, y + 1, z + 1, 0, 0);
+                    Level.setTile(x + 1, y + 1, z, 0, 0);
+                    Level.setTile(x + 1, y + 1, z - 1, 0, 0);
+                    Level.setTile(x - 1, y + 2, z + 1, 0, 0);
+                    Level.setTile(x - 1, y + 2, z, 0, 0);
+                    Level.setTile(x - 1, y + 2, z - 1, 0, 0);
+                    Level.setTile(x, y + 2, z + 1, 0, 0);
+                    Level.setTile(x, y + 2, z, 0, 0);
+                    Level.setTile(x, y + 2, z - 1, 0, 0);
+                    Level.setTile(x + 1, y + 2, z + 1, 0, 0);
+                    Level.setTile(x + 1, y + 2, z, 0, 0);
+                    Level.setTile(x + 1, y + 2, z - 1, 0, 0);
+                }
+            }).start();
         }));
 
-    items.push(new ItemCompat(618, "Riot Drinker I")
-        .setCooldown(30)
-        .setFunc((x, y, z, victim, user) => {
-
-        }));
+    items.push(new ItemCompat(618, "Riot Drinker I").setDamage(4));
     items.push(new ItemCompat(619, "Riot Drinker II")
-        .setCooldown(45)
-        .setFunc((x, y, z, victim, user) => {
+        .setCooldown(30
+            .setFunc((x, y, z, victim, user) => {
+                Level.explode(x, y, z, 4);
+            }));
+    }
 
-        }));
-}
-
-init();
+    init();
