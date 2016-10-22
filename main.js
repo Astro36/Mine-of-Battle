@@ -75,6 +75,25 @@ ItemCompat.prototype.use = function (x, y, z, victim, user) {
 
 
 
+function onUsedItemListener(x, y, z, victim, user, id) {
+    for (let i = items.length; i--;) {
+        i.
+    }
+}
+
+function useItem(attacker, victim) {
+    let itemid = Player.getCarriedItem();
+    if (itemid >= 600 && itemid < 620) {
+        onUsedItemListener(Entity.getX(victim), Entity.getY(victim), Entity.getZ(victim), victim, attacker, itemid);
+    }
+}
+
+function useItem(x, y, z, itemid) {
+    if (itemid >= 600 && itemid < 620) {
+        onUsedItemListener(x, y, z, null, Player.getEntity(), itemid);
+    }
+}
+
 function init() {
     for (let i = 0; i < ITEM_NAMES.length; i++) {
         ModPE.setItem(i * 2 + 600, "map_empty", 0, ITEM_NAMES[i] + " I", 0);
