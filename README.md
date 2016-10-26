@@ -12,7 +12,7 @@ Information for weapon library API:
 ## Contributors
 Thanks to all contributors who helps to make Mine of Battle better.
 
-[https://github.com/Astro36/AstroLibrary/graphs/contributors](https://github.com/Astro36/Mine-of-Battle/graphs/contributors)
+[https://github.com/Astro36/Mine-of-Battle/graphs/contributors](https://github.com/Astro36/Mine-of-Battle/graphs/contributors)
 
 ## License
 Mine of Battle is licensed under the [GPL 3.0](./LICENSE).
