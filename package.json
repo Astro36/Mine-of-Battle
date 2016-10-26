@@ -2,6 +2,7 @@
     "name": "Weapon Library",
     "version": "1.0",
     "description": "ModPE Weapon Library",
+    "homepage": "http://minedev.dothome.co.kr/docs/lib_astro_weapon/1.0/index.html",
     "license": "GPL-3.0",
     "author": "Astro <astr36@naver.com>",
     "repository": {
