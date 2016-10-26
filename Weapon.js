@@ -237,12 +237,20 @@ let me = this.me || {};
         this._iTouchBehavior = null;
     }
 
+    ItemCompat.prototype.getAttackBehavior = function () {
+        return this._iAttackBehavior;
+    };
+
     ItemCompat.prototype.getId = function () {
         return this._id;
     };
 
     ItemCompat.prototype.getName = function () {
         return this._name;
+    };
+
+    ItemCompat.prototype.getTouchBehavior = function () {
+        return this._iTouchBehavior;
     };
 
     ItemCompat.prototype.performAttack = function (attacker, victim) {
@@ -301,6 +309,28 @@ let me = this.me || {};
     }
 
     BlockMagic.prototype = Object.create(ItemCompat.prototype);
+
+
+
+    /**
+     * Class representing a compound weapon.
+     * @since 2016-10-26
+     * @class
+     * @extends {me.astro.weapon.ItemCompat}
+     * @memberOf me.astro.weapon
+     * @param {Number} id ID of the item
+     * @param {String} name Name of the item
+     * @param {me.astro.weapon.ItemCompat} attackWeapon Weapon which gives attack behavior
+     * @param {me.astro.weapon.ItemCompat} touchWeapon Weapon which gives touch behavior
+     */
+    function CompoundWeapon(id, name, attackWeapon, touchWeapon) {
+        this._id = id;
+        this._name = name;
+        this._iAttackBehavior = attackWeapon.getAttackBehavior();
+        this._iTouchBehavior = touchWeapon.getTouchBehavior();
+    }
+
+    CompoundWeapon.prototype = Object.create(ItemCompat.prototype);
 
 
 
@@ -455,6 +485,7 @@ let me = this.me || {};
             SetBlockWithMagic: SetBlockWithMagic
         },
         BlockMagic: BlockMagic,
+        CompoundWeapon: CompoundWeapon,
         ExplosionMagic: ExplosionMagic,
         ItemCompat: ItemCompat,
         PotionMagicOnTarget: PotionMagicOnTarget,
