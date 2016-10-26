@@ -17,13 +17,23 @@ let me = this.me || {};
      */
     "use strict";
 
+    /**
+     * @memberOf me.astro
+     * @namespace weapon
+     */
+
+    /**
+     * @memberOf me.astro.weapon
+     * @namespace behavior
+     */
+
 
 
     /**
      * Interface for classes that represent a item.
      * @since 2016-10-26
      * @interface
-     * @memberOf me.astro.weapon
+     * @memberOf me.astro.weapon.behavior
      */
     function IAttackBehavior() {}
 
@@ -37,7 +47,7 @@ let me = this.me || {};
      * Interface for classes that represent a item.
      * @since 2016-10-26
      * @interface
-     * @memberOf me.astro.weapon
+     * @memberOf me.astro.weapon.behavior
      */
     function ITouchBehavior() {}
 
@@ -48,10 +58,30 @@ let me = this.me || {};
 
 
     /**
+     * Behavior representing to fire attack with a sword.
+     * @since 2016-10-26
+     * @class
+     * @implements {me.astro.weapon.behavior.IAttackBehavior}
+     * @memberOf me.astro.weapon.behavior
+     * @param {Number} damage Damage of the sword
+     */
+    function AttackFireWithSword(damage) {
+        this._damage = damage;
+    }
+
+    AttackFireWithSword.prototype.attack = function (attacker, victim) {
+        Entity.setFireTicks(victim, 10);
+        Entity.setHealth(victim, Entity.getHealth(victim) - this._damage);
+    };
+
+
+
+    /**
      * Behavior representing to attack with a sword.
      * @since 2016-10-26
      * @class
-     * @implements {me.astro.weapon.IAttackBehavior}
+     * @implements {me.astro.weapon.behavior.IAttackBehavior}
+     * @memberOf me.astro.weapon.behavior
      * @param {Number} damage Damage of the sword
      */
     function AttackWithSword(damage) {
@@ -68,7 +98,8 @@ let me = this.me || {};
      * Behavior representing to explode the block.
      * @since 2016-10-26
      * @class
-     * @implements {me.astro.weapon.ITouchBehavior}
+     * @implements {me.astro.weapon.behavior.ITouchBehavior}
+     * @memberOf me.astro.weapon.behavior
      * @param {Number} range Range of the magic
      * @param {Boolean} onFire Explode with fire
      */
@@ -84,10 +115,66 @@ let me = this.me || {};
 
 
     /**
-     * Behavior representing to attack with a sword.
+     * Behavior representing to give a potion effect on a target with a magic.
      * @since 2016-10-26
      * @class
-     * @implements {me.astro.weapon.IAttackBehavior}
+     * @implements {me.astro.weapon.behavior.ITouchBehavior}
+     * @memberOf me.astro.weapon.behavior
+     * @param {Number} range Range of the magic
+     * @param {Number} potionType Type of the potion effect
+     * @param {Number} potionDuration Duration of the potion effect
+     * @param {Number} potionAmp Amplification of the potion effect
+     */
+    function GivePotionOnTargetWithMagic(range, potionType, potionDuration, potionAmp) {
+        this._range = range;
+        this._type = potionType;
+        this._duration = potionDuration;
+        this._amp = potionAmp;
+    }
+
+    GivePotionOnTargetWithMagic.prototype.touch = function (x, y, z, playerEntity) {
+        let type = this._type,
+            duration = this._duration,
+            amp = this._amp,
+            entities = Entity.getAll();
+        for (let i = entities.length; i--;) {
+            let entity = entities[i];
+            if (playerEntity !== entity) {
+                Entity.addEffect(entity, type, duration, amp, false, true);
+            }
+        }
+    };
+
+
+
+    /**
+     * Behavior representing to give a potion effect on an user with a magic.
+     * @since 2016-10-26
+     * @class
+     * @implements {me.astro.weapon.behavior.ITouchBehavior}
+     * @memberOf me.astro.weapon.behavior
+     * @param {Number} potionType Type of the potion effect
+     * @param {Number} potionDuration Duration of the potion effect
+     * @param {Number} potionAmp Amplification of the potion effect
+     */
+    function GivePotionOnUserWithMagic(potionType, potionDuration, potionAmp) {
+        this._type = potionType;
+        this._duration = potionDuration;
+        this._amp = potionAmp;
+    }
+
+    GivePotionOnUserWithMagic.prototype.touch = function (x, y, z, playerEntity) {
+        Entity.addEffect(playerEntity, this._type, this._duration, this._amp, false, true);
+    };
+
+
+
+    /**
+     * Behavior representing to give a potion effect on a victim with a sword.
+     * @since 2016-10-26
+     * @class
+     * @implements {me.astro.weapon.behavior.IAttackBehavior}
+     * @memberOf me.astro.weapon.behavior
      * @param {Number} potionType Type of the potion effect
      * @param {Number} potionDuration Duration of the potion effect
      * @param {Number} potionAmp Amplification of the potion effect
@@ -105,10 +192,11 @@ let me = this.me || {};
 
 
     /**
-     * Behavior representing to place the blocks
+     * Behavior representing to place the blocks with a magic.
      * @since 2016-10-26
      * @class
-     * @implements {me.astro.weapon.ITouchBehavior}
+     * @implements {me.astro.weapon.behavior.ITouchBehavior}
+     * @memberOf me.astro.weapon.behavior
      * @param {Number} range Range of the magic
      * @param {Number} blockid ID of the block which will be placed by the magic
      * @param {Number} blockData Data ID of the block which will be placed by the magic
@@ -239,6 +327,74 @@ let me = this.me || {};
 
 
     /**
+     * Class representing a fire sword.
+     * @since 2016-10-26
+     * @class
+     * @extends {me.astro.weapon.ItemCompat}
+     * @memberOf me.astro.weapon
+     * @param {Number} id ID of the item
+     * @param {String} name Name of the item
+     * @param {Number} damage Damage of the item
+     */
+    function FireSword(id, name, damage) {
+        this._id = id;
+        this._name = name;
+        this._iAttackBehavior = new AttackFireWithSword(damage);
+        this._iTouchBehavior = null;
+    }
+
+    FireSword.prototype = Object.create(ItemCompat.prototype);
+
+
+
+    /**
+     * Class representing a magic which gives potion effects on a target.
+     * @since 2016-10-26
+     * @class
+     * @extends {me.astro.weapon.ItemCompat}
+     * @memberOf me.astro.weapon
+     * @param {Number} id ID of the item
+     * @param {String} name Name of the item
+     * @param {Number} range Range of the magic
+     * @param {Number} potionType Type of the potion effect
+     * @param {Number} potionDuration Duration of the potion effect
+     * @param {Number} potionAmp Amplification of the potion effect
+     */
+    function PotionMagicOnTarget(id, name, range, potionType, potionDuration, potionAmp) {
+        this._id = id;
+        this._name = name;
+        this._iAttackBehavior = null;
+        this._iTouchBehavior = new GivePotionOnTargetWithMagic(range, potionType, potionDuration, potionAmp);
+    }
+
+    PotionMagicOnTarget.prototype = Object.create(ItemCompat.prototype);
+
+
+
+    /**
+     * Class representing a magic which gives potion effects on an user.
+     * @since 2016-10-26
+     * @class
+     * @extends {me.astro.weapon.ItemCompat}
+     * @memberOf me.astro.weapon
+     * @param {Number} id ID of the item
+     * @param {String} name Name of the item
+     * @param {Number} potionType Type of the potion effect
+     * @param {Number} potionDuration Duration of the potion effect
+     * @param {Number} potionAmp Amplification of the potion effect
+     */
+    function PotionMagicOnUser(id, name, potionType, potionDuration, potionAmp) {
+        this._id = id;
+        this._name = name;
+        this._iAttackBehavior = null;
+        this._iTouchBehavior = new GivePotionOnUserWithMagic(potionType, potionDuration, potionAmp);
+    }
+
+    PotionMagicOnUser.prototype = Object.create(ItemCompat.prototype);
+
+
+
+    /**
      * Class representing a sword which gives potion effect on victims.
      * @since 2016-10-26
      * @class
@@ -288,8 +444,11 @@ let me = this.me || {};
 
     astro.weapon = {
         behavior: {
+            AttackFireWithSword: AttackFireWithSword,
             AttackWithSword: AttackWithSword,
             ExplodeWithMagic: ExplodeWithMagic,
+            GivePotionOnTargetWithMagic: GivePotionOnTargetWithMagic,
+            GivePotionOnUserWithMagic: GivePotionOnUserWithMagic,
             GivePotionWithSword: GivePotionWithSword,
             IAttackBehavior: IAttackBehavior,
             ITouchBehavior: ITouchBehavior,
@@ -298,6 +457,8 @@ let me = this.me || {};
         BlockMagic: BlockMagic,
         ExplosionMagic: ExplosionMagic,
         ItemCompat: ItemCompat,
+        PotionMagicOnTarget: PotionMagicOnTarget,
+        PotionMagicOnUser: PotionMagicOnUser,
         PotionSword: PotionSword,
         Sword: Sword
     };
