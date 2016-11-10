@@ -17,6 +17,13 @@ let me = this.me || {};
      */
     "use strict";
 
+    const Thread_ = java.lang.Thread,
+        ScriptManager_ = net.zhuoweizhang.mcpelauncher.ScriptManager,
+        ScriptableObject_ = org.mozilla.javascript.ScriptableObject,
+        NAME = "Weapon Library",
+        NAME_CODE = "me_astro_weapon_library",
+        VERSION = "1.0";
+
     /**
      * @memberOf me.astro
      * @namespace weapon
@@ -469,7 +476,16 @@ let me = this.me || {};
 
 
     let init = () => {
-
+        new Thread_({
+            run() {
+                Thread_.sleep(3000);
+                let scripts = ScriptManager_.scripts;
+                for (let i = scripts.size(); i--;) {
+                    ScriptableObject_.putProperty(scripts.get(i).scope, "me", me);
+                }
+                ScriptManager_.callScriptMethod("onLibraryLoaded", [NAME, NAME_CODE, VERSION]);
+            }
+        }).start();
     };
 
     astro.weapon = {
