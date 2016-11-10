@@ -228,6 +228,48 @@ let me = this.me || {};
     };
 
 
+    /**
+     * Class representing a cooldown for weapons.
+     * @since 2016-11-10
+     * @class
+     * @memberOf me.astro.weapon
+     * @param {Number} time Sets How long you can't use same weapon again
+     */
+    function Cooldown(time) {
+        this._available = true;
+        this._time = time;
+    }
+
+    Cooldown.prototype.getTime = function () {
+        return this._time;
+    };
+
+    Cooldown.prototype.isAvailable = function () {
+        return this._available;
+    };
+
+    Cooldown.prototype.run = function () {
+        let thiz = this;
+        new Thread_({
+            run() {
+                thiz._available = false;
+                Thread_.sleep(thiz._time * 1000);
+                thiz._available = true;
+            }
+        }).start();
+    };
+
+    Cooldown.prototype.setAvailable = function (available) {
+        this._available = available;
+        return this;
+    };
+
+    Cooldown.prototype.setTime = function (time) {
+        this._time = time;
+        return this;
+    };
+
+
 
     /**
      * Class representing a weapon.
@@ -240,12 +282,17 @@ let me = this.me || {};
     function ItemCompat(id, name) {
         this._id = id;
         this._name = name;
+        this._cooldown = null;
         this._iAttackBehavior = null;
         this._iTouchBehavior = null;
     }
 
     ItemCompat.prototype.getAttackBehavior = function () {
         return this._iAttackBehavior;
+    };
+
+    ItemCompat.prototype.getCooldown = function () {
+        return this._cooldown;
     };
 
     ItemCompat.prototype.getId = function () {
@@ -261,21 +308,42 @@ let me = this.me || {};
     };
 
     ItemCompat.prototype.performAttack = function (attacker, victim) {
-        let iAttackBehavior = this._iAttackBehavior;
+        let cooldown = this._cooldown,
+            iAttackBehavior = this._iAttackBehavior;
         if (iAttackBehavior !== null) {
-            iAttackBehavior.attack(attacker, victim);
+            if (cooldown === null) {
+                iAttackBehavior.attack(attacker, victim);
+            } else {
+                if (cooldown.isAvailable()) {
+                    iAttackBehavior.attack(attacker, victim);
+                    cooldown.run();
+                }
+            }
         }
     };
 
     ItemCompat.prototype.performTouch = function (x, y, z, playerEntity) {
-        let iTouchBehavior = this._iTouchBehavior;
+        let cooldown = this._cooldown,
+            iTouchBehavior = this._iTouchBehavior;
         if (iTouchBehavior !== null) {
-            iTouchBehavior.touch(x, y, z, playerEntity);
+            if (cooldown === null) {
+                iTouchBehavior.touch(x, y, z, playerEntity);
+            } else {
+                if (cooldown.isAvailable()) {
+                    iTouchBehavior.touch(x, y, z, playerEntity);
+                    cooldown.run();
+                }
+            }
         }
     };
 
     ItemCompat.prototype.setAttackBehavior = function (iAttackBehavior) {
         this._iAttackBehavior = iAttackBehavior;
+        return this;
+    };
+
+    ItemCompat.prototype.setCooldown = function (cooldown) {
+        this._cooldown = cooldown;
         return this;
     };
 
@@ -502,6 +570,7 @@ let me = this.me || {};
         },
         BlockMagic: BlockMagic,
         CompoundWeapon: CompoundWeapon,
+        Cooldown: Cooldown,
         ExplosionMagic: ExplosionMagic,
         ItemCompat: ItemCompat,
         PotionMagicOnTarget: PotionMagicOnTarget,
